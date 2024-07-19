@@ -259,6 +259,7 @@ class DefaultPlugin extends AbstractPlugin
         $transaction->setTrackingId($payment->getId());
 
         $parameters = array(
+            'currency'      => $payment->getPaymentInstruction()->getCurrency(),
             'amount'        => $payment->getTargetAmount(),
             'description'   => $data->has('description') ? $data->get('description') : 'Transaction ' . $payment->getId(),
             'returnUrl'     => $data->get('return_url'),
@@ -283,7 +284,7 @@ class DefaultPlugin extends AbstractPlugin
             case CreditcardType::class:
                 return 'creditcard';
             case MistercashType::class:
-                return 'mistercash';
+                return 'bancontact';
             case SofortType::class:
                 return 'sofort';
             case BanktransferType::class:
@@ -302,6 +303,12 @@ class DefaultPlugin extends AbstractPlugin
                 return 'paysafecard';
         }
 
-        return substr($transaction->getPayment()->getPaymentInstruction()->getPaymentSystemName(), 7);
+        $name = substr($transaction->getPayment()->getPaymentInstruction()->getPaymentSystemName(), 7);
+
+        if ($name === 'mistercash') {
+            return 'bancontact';
+        }
+
+        return $name;
     }
 }
