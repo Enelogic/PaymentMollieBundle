@@ -229,10 +229,6 @@ class DefaultPlugin extends AbstractPlugin
             $data = $response->getData();
 
             if(isset($data['error']) && isset($data['error']['type']) && $data['error']['type'] == 'system') {
-                if(isset($data['error']['field']) && $data['error']['field'] == 'issuer') {
-                    return new IdealIssuerTemporarilyUnavailableException("Can't start payment because of an issue with the issuer. Other issuers may work.");
-                }
-
                 return new MollieTemporarilyUnavailableException($response->getMessage());
             }
         }
